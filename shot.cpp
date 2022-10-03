@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "shot.h"
 #include "game.h"
+#include "ShotBase.h"
 
 namespace
 {
@@ -46,5 +47,5 @@ void Shot::update()
 void Shot::draw()
 {
 	if (!m_isExist) return;
-	DrawGraphF(m_pos.x, m_pos.y, m_handle, true);
+	DrawGraphF(m_pos.x+40, m_pos.y+24, m_handle, true);
 }
