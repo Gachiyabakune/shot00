@@ -1,5 +1,7 @@
 #include "DxLib.h"
 #include "SceneMain.h"
+#include "ShotSecond.h"
+#include "ShotNormal.h"
 
 namespace
 {
@@ -25,11 +27,6 @@ void SceneMain::init()
 	m_player.setHandle(m_hPlayerGraphic);
 	m_player.init();
 	m_player.setMain(this);
-
-	for (auto& shot : m_shot)
-	{
-		shot.setHandle(m_hShotGraphic);
-	}
 }
 
 // I—¹ˆ—
@@ -37,16 +34,57 @@ void SceneMain::end()
 {
 	DeleteGraph(m_hPlayerGraphic);
 	DeleteGraph(m_hShotGraphic);
+
+	for (auto& pShot : m_ShotVt)
+	{
+		if (!pShot) continue;
+		delete pShot;
+		pShot = nullptr;
+	}
 }
 
 // –ˆƒtƒŒ[ƒ€‚Ìˆ—
 void SceneMain::update()
 {
 	m_player.update();
-	for (auto& shot : m_shot)
+
+	std::vector<ShotBase*>::iterator it = m_ShotVt.begin();
+	while (it != m_ShotVt.end())
 	{
-		shot.update();
+		auto& pShot = (*it);
+
+		if (!pShot)
+		{
+			it++;
+			continue;
+		}
+		pShot->update();
+		if (!pShot->isExist())
+		{
+			delete pShot;
+			pShot = nullptr;
+
+			//vector‚Ì—v‘fíœ
+			it = m_ShotVt.erase(it);
+			continue;
+		}
+		it++;
 	}
+#if false
+	for (auto& pShot : m_ShotVt)
+	{
+		if (!pShot) continue;
+		pShot->update();
+		if (!pShot->isExist())
+		{
+			delete pShot;
+			pShot = nullptr;
+
+			//vector‚Ì—v‘fíœ
+
+		}
+	}
+#endif
 }
 
 // –ˆƒtƒŒ[ƒ€‚Ì•`‰æ
@@ -54,28 +92,30 @@ void SceneMain::draw()
 {
 	m_player.draw();
 
-	for (auto& shot : m_shot)
+	for (auto& pShot : m_ShotVt)
 	{
-		shot.draw();
+		if (!pShot)continue;
+		pShot->draw();
 	}
-
-	//Œ»İ‘¶İ‚µ‚Ä‚¢‚é’e‚Ì”‚ğ•\¦
-	int shotNum = 0;
-	for (auto& shot : m_shot)
-	{
-		if (shot.isExist()) shotNum++;
-	}
-	DrawFormatString(0, 0, GetColor(255, 255, 255), "’e‚Ì”:%d", shotNum);
+	DrawFormatString(0, 0, GetColor(255, 255, 255), "’e‚Ì”:%d", m_ShotVt.size());
 }
 
 bool SceneMain::creatShot(Vec2 pos)
 {
-	for (auto& shot : m_shot)
-	{
-		if (shot.isExist()) continue;
+	ShotNormal* pShot = new ShotNormal;
+	pShot->setHandle(m_hShotGraphic);
+	pShot->start(pos);
+	m_ShotVt.push_back(pShot);
 
-		shot.start(pos);
-		return true;
-	}
-	return false;
+	return true;
+}
+
+bool SceneMain::creatShotSecond(Vec2 pos)
+{
+	ShotSecond* pShot = new ShotSecond;
+	pShot->setHandle(m_hShotGraphic);
+	pShot->start(pos);
+	m_ShotVt.push_back(pShot);
+
+	return true;
 }
