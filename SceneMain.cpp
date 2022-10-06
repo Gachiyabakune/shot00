@@ -2,6 +2,7 @@
 #include "SceneMain.h"
 #include "ShotSecond.h"
 #include "ShotNormal.h"
+#include "ShotThird.h"
 
 namespace
 {
@@ -113,6 +114,16 @@ bool SceneMain::creatShot(Vec2 pos)
 bool SceneMain::creatShotSecond(Vec2 pos)
 {
 	ShotSecond* pShot = new ShotSecond;
+	pShot->setHandle(m_hShotGraphic);
+	pShot->start(pos);
+	m_ShotVt.push_back(pShot);
+
+	return true;
+}
+
+bool SceneMain::creatShotThird(Vec2 pos)
+{
+	ShotThird* pShot = new ShotThird;
 	pShot->setHandle(m_hShotGraphic);
 	pShot->start(pos);
 	m_ShotVt.push_back(pShot);

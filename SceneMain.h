@@ -24,6 +24,8 @@ public:
 	bool creatShot(Vec2 pos);
 
 	bool creatShotSecond(Vec2 pos);
+
+	bool creatShotThird(Vec2 pos);
 	
 //private:
 //	// ƒVƒ‡ƒbƒg‚ÌÅ‘å”
